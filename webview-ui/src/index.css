@@ -1,0 +1,94 @@
+:root {
+  --container-paddding: 0px;
+}
+
+body {
+  padding: 0 var(--container-paddding);
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+  font-weight: var(--vscode-font-weight);
+  font-size: var(--vscode-font-size);
+  background-color: var(--vscode-editor-background);
+  margin: 0;
+  overflow: hidden; /* App handles scroll */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TanStack Table Styles */
+.table-container {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+table {
+  border-collapse: separate; /* Required for sticky header */
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+}
+
+thead th {
+  text-align: left;
+  padding: 4px 12px;
+  background-color: var(--vscode-editor-background); /* Sticky header bg */
+  border-bottom: 1px solid var(--vscode-panel-border);
+  border-right: 1px solid var(--vscode-panel-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-weight: 600;
+  color: var(--vscode-panelTitle-activeForeground);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+thead th:last-child {
+  border-right: none;
+}
+
+thead th:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+tbody td {
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--vscode-editorGroup-border);
+  border-right: 1px solid var(--vscode-editorGroup-border);
+  color: var(--vscode-editor-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+tbody td:last-child {
+  border-right: none;
+}
+
+tbody tr:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-background);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

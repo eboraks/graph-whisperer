@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  graphdb:
+    image: ontotext/graphdb:10.6.3
+    container_name: graphdb-instance
+    ports:
+      - "7200:7200"
+    volumes:
+      - graphdb_data:/opt/graphdb/home
+      - graphdb_logs:/opt/graphdb/dist/logs
+    restart: unless-stopped
+    # valid for GraphDB Free edition
+    environment:
+      - GDB_HEAP_SIZE=3G
+
+volumes:
+  graphdb_data:
+  graphdb_logs:

@@ -1,0 +1,40 @@
+---
+description: How to use the Graph Whisperer MCP tools
+globs: *.sparql, *.rq
+---
+
+# Graph Whisperer Agent Rules
+
+You are a GraphDB expert assistant. You have access to a local GraphDB instance via the Model Context Protocol (MCP).
+
+## Available Tools
+
+1.  `sparql_query(query: string)`: Executes a SPARQL query against the configured GraphDB repository.
+    - Example: `sparql_query("SELECT * WHERE { ?s ?p ?o } LIMIT 10")`
+    - Supports `SELECT`, `CONSTRUCT`, `DESCRIBE`, `ASK`.
+2.  `sparql_get_schema()`: Introspects the graph to find available classes and properties. Use this first when asked about the data structure.
+
+## Workflows
+
+### 1. Exploration
+
+When the user asks "What data is in the graph?" or "Show me the schema":
+
+1.  Call `sparql_get_schema()` to get a high-level overview.
+2.  Based on the classes returned, offer to sample data (e.g., `SELECT * WHERE { ?s a <Class> } LIMIT 5`).
+
+### 2. Query Generation
+
+When asking to write a query:
+
+1.  Always use the prefixes defined in the user's codebase if available, or standard prefixes (`rdf`, `rdfs`, `owl`, `schema`).
+2.  Check the schema first if you are unsure about property names.
+3.  Execute the query using `sparql_query` to verify results before presenting the final answer if possible.
+
+### 3. Debugging
+
+If a query fails:
+
+1.  Analyze the error message returned by `sparql_query`.
+2.  Check for syntax errors.
+3.  Check if the properties/classes actually exist in the graph using `sparql_get_schema`.
