@@ -3,10 +3,13 @@ import { OntologyProvider } from '../views/OntologyProvider';
 
 export class GraphWhispererChat {
     
-    constructor(private ontologyProvider: OntologyProvider) {}
+    constructor(
+        private ontologyProvider: OntologyProvider,
+        private context: vscode.ExtensionContext
+    ) {}
 
     public static register(context: vscode.ExtensionContext, ontologyProvider: OntologyProvider) {
-        const handler = new GraphWhispererChat(ontologyProvider);
+        const handler = new GraphWhispererChat(ontologyProvider, context);
         const participant = vscode.chat.createChatParticipant('graphwhisperer', (request, context, response, token) => {
             return handler.handleRequest(request, context, response, token);
         });
@@ -45,7 +48,12 @@ export class GraphWhispererChat {
             if (properties.length > 50) ontologyContext += "...(more properties truncated)\n";
         }
 
-        // 2. Construct System Prompt
+        // 2. Load Skill Instructions and Rules from Settings
+        const config = vscode.workspace.getConfiguration('graphwhisperer');
+        const skillInstructions = config.get<string>('agent.introspectionSkill') || '';
+        const agentRules = config.get<string>('agent.rules') || '';
+
+        // 3. Construct System Prompt
         const messages = [
             vscode.LanguageModelChatMessage.User(
                 `You are a SPARQL expert assistant named "Graph Whisperer". 
@@ -53,6 +61,12 @@ export class GraphWhispererChat {
                 
                 ${ontologyContext}
                 
+                Here are your core instructions and skills for SPARQL introspection:
+                ${skillInstructions}
+
+                Here are your general development rules:
+                ${agentRules}
+
                 User Question: ${request.prompt}`
             )
         ];

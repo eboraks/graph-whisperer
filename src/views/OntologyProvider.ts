@@ -14,10 +14,46 @@ export class OntologyProvider implements vscode.TreeDataProvider<OntologyItem>, 
     handleDrag(source: readonly OntologyItem[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): void | Promise<void> {
         if (source.length === 0) { return; }
         
-        const uris = source.map(item => item.uri).filter(uri => !!uri).join('\r\n');
+        let uris: string[] = [];
+
+        // 1. Get Active Editor content to find Prefixes
+        const editor = vscode.window.activeTextEditor;
+        const prefixMap = new Map<string, string>(); // Namespace URI -> Prefix Label
+
+        if (editor) {
+            const text = editor.document.getText();
+            // Regex to find prefixes: PREFIX prefix: <uri>
+            const prefixRegex = /PREFIX\s+([\w\-]+):\s*<([^>]+)>/gi;
+            let match;
+            while ((match = prefixRegex.exec(text)) !== null) {
+                const prefixLabel = match[1];
+                const namespaceUri = match[2];
+                prefixMap.set(namespaceUri, prefixLabel);
+            }
+        }
+
+        // 2. Process each item
+        uris = source.map(item => {
+            if (!item.uri) return '';
+            
+            // Checks
+            for (const [nsUri, prefix] of prefixMap.entries()) {
+                if (item.uri.startsWith(nsUri)) {
+                    // Replace namespace with prefix
+                    const localName = item.uri.substring(nsUri.length);
+                    // Ensure we don't produce invalid QNames (simple check)
+                    return `${prefix}:${localName}`;
+                }
+            }
+            
+            // Default: Return full URI
+            return item.uri;
+        }).filter(u => !!u);
+
+        const data = uris.join('\n'); // Standard newline for editor insertion
         // valid 'text/uri-list' causes VS Code to try opening the URI as a file. 
         // We ONLY want text insertion, so we remove 'text/uri-list'.
-        dataTransfer.set('text/plain', new vscode.DataTransferItem(uris));
+        dataTransfer.set('text/plain', new vscode.DataTransferItem(data));
     }
     
     refresh(client?: SparqlClient): void {

@@ -60,7 +60,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "sparql_get_schema",
-        description: "Introspect the graph schema to understand available classes and properties. Returns a list of classes (rdfs:Class, owl:Class) and properties used in the graph.",
+        description: "Introspect the graph schema to understand available classes and properties. Returns a list of classes (rdfs:Class, owl:Class) and properties used in the graph. Use this first, but if looking for specific concepts (like 'Human'), prefer using sparql_query with a keyword search pattern.",
         inputSchema: zodToJsonSchema(z.object({})),
       },
     ],
