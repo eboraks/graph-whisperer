@@ -139,6 +139,47 @@ To match the "SQL Server" look (bottom panel):
   2.  Clean up logging.
   3.  Package (`vsce package`) and test installation.
 
+#### Phase 5: Ontology Explorer Enhancements (New)
+
+- **Goal**: Make the ontology view a powerful tool for navigating and building queries.
+- **Features**:
+  1.  **Deep Traversal (3-Hops)**:
+      - Navigate from Class -> Property -> Range Class -> Property.
+      - Stop at 3 levels of depth to prevent infinite circular queries.
+      - Differentiate `owl:ObjectProperty` (expandable) from `owl:DatatypeProperty` (leaf).
+  2.  **Search**:
+      - Add a "Search" action to the view title.
+      - Server-side SPARQL filter (`FILTER(regex(?label, "term", "i"))`) to find matching classes/properties without loading the whole graph.
+  3.  **Drag & Drop**:
+      - Allow dragging a class or property from the tree directly into the SPARQL editor.
+      - Dropping inserts the full URI (or prefixed name if prefixes exist).
+- **Technical Plan**:
+  - Implement `vscode.TreeDragAndDropController`.
+  - Refactor `OntologyProvider.getChildren` to accept context/depth.
+  - New SPARQL queries for fetching property ranges (using `rdfs:range` or `?s ?p ?o` sampling).
+
+---
+
+#### Phase 6: Editor Intelligence & AI Integration (New)
+
+- **Goal**: Empower both developers and AI agents with ontology-aware suggestions and context.
+- **Features**:
+  1.  **Intelligent SPARQL Completion (IntelliSense)**:
+      - Implement `vscode.CompletionItemProvider`.
+      - **Context-Aware Properties**: If a variable is inferred to be of type `T`, suggest only properties valid for `T` (domain/range check).
+      - **Variable Naming**: Suggest semantic variable names (e.g., `?film` for `vocab:Film`) when typing `?`.
+  2.  **Copilot Integration (Chat Participant)**:
+      - Register a Chat Participant `@graphwhisperer` using `vscode.chat.createChatParticipant`.
+      - Allow users to ask natural language questions about the ontology (e.g., "@graphwhisperer How do I find all films with a specific character?").
+      - The participant uses the `OntologyProvider` cache to ground its answers.
+  3.  **Agent Context Export (Drift/Rules)**:
+      - Auto-generate a lightweight schema summary `.vscode/ontology_summary.md` (hidden or visible).
+      - This file acts as "context" for generic agents (Cursor, Antigravity) that scan the file system, enabling them to understand the data model without needing explicit tool calls.
+- **Technical Plan**:
+  - Use `vscode.languages.registerCompletionItemProvider` for SPARQL.
+  - Implement a basic SPARQL parser (or use regex for simple cases) to infer variable types in the current query.
+  - Implement `vscode.chat.createChatParticipant` handler.
+
 ---
 
 ### 6. Development Prerequisites

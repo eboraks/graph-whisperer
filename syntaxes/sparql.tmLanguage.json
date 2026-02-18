@@ -1,0 +1,131 @@
+{
+	"name": "SPARQL",
+	"scopeName": "source.sparql",
+	"fileTypes": [
+		"sparql",
+		"rq"
+	],
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#variables"
+		},
+		{
+			"include": "#uris"
+		},
+		{
+			"include": "#numbers"
+		},
+        {
+            "include": "#punctuations"
+        },
+        {
+            "include": "#functions"
+        }
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.number-sign.sparql",
+					"match": "#.*$"
+				}
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"name": "string.quoted.triple.double.sparql",
+					"begin": "\"\"\"",
+					"end": "\"\"\""
+				},
+				{
+					"name": "string.quoted.triple.single.sparql",
+					"begin": "'''",
+					"end": "'''"
+				},
+				{
+					"name": "string.quoted.double.sparql",
+					"match": "\"[^\"]*\""
+				},
+				{
+					"name": "string.quoted.single.sparql",
+					"match": "'[^']*'"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.sparql",
+					"match": "(?i)\\b(SELECT|CONSTRUCT|ASK|DESCRIBE|WHERE|LIMIT|OFFSET|ORDER BY|DISTINCT|REDUCED|FROM|NAMED|GRAPH|OPTIONAL|UNION|FILTER|BIND|MINUS|SERVICE|VALUES|AS|GROUP BY|HAVING|Delete|Insert|Data|Load|Clear|Drop|Create|Add|Move|Copy|Prefix|Base)\\b"
+				},
+				{
+					"name": "constant.language.sparql",
+					"match": "(?i)\\b(true|false)\\b"
+				},
+                {
+                    "name": "keyword.operator.sparql",
+                    "match": "(?i)\\b(a)\\b"
+                }
+
+			]
+		},
+        "functions": {
+            "patterns": [
+                {
+                    "name": "support.function.sparql",
+                    "match": "(?i)\\b(STR|LANG|LANGMATCHES|DATATYPE|BOUND|IRI|URI|BNODE|RAND|ABS|CEIL|FLOOR|ROUND|CONCAT|SUBSTR|STRLEN|REPLACE|UCASE|LCASE|ENCODE_FOR_URI|CONTAINS|STRSTARTS|STRENDS|STRBEFORE|STRAFTER|YEAR|MONTH|DAY|HOURS|MINUTES|SECONDS|TIMEZONE|TZ|NOW|UUID|STRUUID|MD5|SHA1|SHA256|SHA384|SHA512|COALESCE|IF|STRLANG|STRDT|isIRI|isURI|isBLANK|isLITERAL|isNUMERIC|REGEX|EXISTS|NOT EXISTS|COUNT|SUM|MIN|MAX|AVG|SAMPLE|GROUP_CONCAT|SEPARATOR)\\b"
+                }
+            ]
+        },
+		"variables": {
+			"patterns": [
+				{
+					"name": "variable.other.sparql",
+					"match": "[\\?\\$][a-zA-Z0-9_]+"
+				}
+			]
+		},
+		"uris": {
+			"patterns": [
+				{
+					"name": "constant.other.uri.sparql",
+					"match": "<[^>]*>"
+				},
+				{
+					"name": "entity.name.tag.sparql",
+					"match": "[a-zA-Z0-9_\\-]+:[a-zA-Z0-9_\\-]*"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.sparql",
+					"match": "\\b\\d+(\\.\\d+)?\\b"
+				}
+			]
+		},
+        "punctuations": {
+            "patterns": [
+                {
+                    "name": "punctuation.separator.sparql",
+                    "match": "[.;,{}\\[\\]()]"
+                },
+                {
+                    "name": "keyword.operator.sparql",
+                    "match": "[!^|&/=*+-]"
+                }
+            ]
+        }
+	}
+}
