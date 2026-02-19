@@ -2,6 +2,12 @@
   "name": "graph-whisperer",
   "displayName": "Graph Whisperer",
   "description": "Professional-grade VS Code extension for RDF/SPARQL development, optimized for GraphDB.",
+  "license": "AGPL-3.0-or-later",
+  "publisher": "eboraks",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eboraks/graph-whisperer.git"
+  },
   "icon": "resources/icon.png",
   "version": "0.0.1",
   "engines": {
