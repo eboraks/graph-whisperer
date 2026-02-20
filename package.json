@@ -159,10 +159,12 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build:webview && npm run compile",
+    "vscode:prepublish": "npm run build:webview && npm run bundle",
     "build:webview": "vite build",
     "compile": "tsc -p ./",
+    "bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify --log-level=info",
     "watch": "tsc -watch -p ./",
+    "watch:bundle": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch --log-level=info",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test"
@@ -177,7 +179,8 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "eslint": "^9.0.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^10.0.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "typescript": "^5.5.0",
