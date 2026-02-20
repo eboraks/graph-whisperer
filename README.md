@@ -4,6 +4,7 @@
 
 ## Features
 
+ 
 ### 🧠 Intelligent SPARQL Assistant
 
 - **Chat with your Graph**: Ask questions in natural language (e.g., _"Find all Persons who know each other"_).
@@ -11,6 +12,8 @@
 - **Configurable Agent**: Customize the AI's skills and rules directly in VS Code Settings.
 
 ### 🔍 Ontology Explorer
+
+![Graph Whisperer UI](resources/graph_whisperer_screenshot.png)
 
 - **Tree View**: Navigate your graph's class hierarchy and property definitions.
 - **Smart Drag & Drop**: Drag a class or property into your SPARQL editor.
@@ -25,6 +28,14 @@
 
 ## Installation
 
+### From Open VSX Registry
+ 
+1.  Open the **Extensions** view in VS Code (`Ctrl+Shift+X`).
+2.  Search for `eboraks.graph-whisperer`.
+3.  Click **Install**.
+ 
+Alternatively, visit the [Open VSX extension page](https://open-vsx.org/extension/eboraks/graph-whisperer).
+ 
 ### From Marketplace (Coming Soon)
 
 Search for "Graph Whisperer" in the VS Code Extensions Marketplace.
