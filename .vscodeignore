@@ -1,0 +1,36 @@
+# Source and Build Config
+src/**
+webview-ui/**
+.vscode/**
+.vscode-test/**
+.git/**
+.agent/**
+.cursor/**
+.npm-cache/**
+.npmrc
+tsconfig.json
+vite.config.*
+eslint.config.mjs
+package-lock.json
+
+# Development Assets
+Graph_Whisperer.png
+test.sparql
+docker-compose.yml
+check_image.py
+
+# Dependencies & Build Artifacts
+node_modules/**
+out/test/**
+*.vsix
+
+# Keep bundled output and assets
+!out/extension.js
+!out/webview/**
+!resources/**
+!syntaxes/**
+!language-configuration.json
+!package.json
+!LICENSE
+!README.md
+

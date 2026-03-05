@@ -44,7 +44,7 @@ Search for "Graph Whisperer" in the VS Code Extensions Marketplace.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/graph-whisperer.git
+    git clone https://github.com/eboraks/graph-whisperer.git
     cd graph-whisperer
     ```
 2.  **Install Dependencies:**
