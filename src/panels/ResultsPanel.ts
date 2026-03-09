@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 export class ResultsPanel implements vscode.WebviewViewProvider {
-    public static readonly viewType = 'graphwhisperer.results';
+    public static readonly viewType = 'sparqlwhisperer.results';
     private _view?: vscode.WebviewView;
 
     constructor(private readonly _extensionUri: vscode.Uri) {}
@@ -49,11 +49,11 @@ export class ResultsPanel implements vscode.WebviewViewProvider {
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link href="${styleUri}" rel="stylesheet">
-                <title>Graph Whisperer Results</title>
+                <title>SPARQL Whisperer Results</title>
             </head>
             <body>
                 <div id="root"></div>
-                <script nonce="${nonce}" src="${scriptUri}"></script>
+                <script nonce="${nonce}" type="module" src="${scriptUri}"></script>
             </body>
             </html>`;
     }

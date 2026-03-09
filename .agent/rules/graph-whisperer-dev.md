@@ -1,8 +1,8 @@
-## **name: graph-whisperer-dev description: Guidelines for building the GraphWhisperer VS Code extension using Node.js and SPARQL. alwaysOn: true**
+## **name: sparql-whisperer-dev description: Guidelines for building the SparqlWhisperer VS Code extension using Node.js and SPARQL. alwaysOn: true**
 
-# **GraphWhisperer Development Rules**
+# **SparqlWhisperer Development Rules**
 
-You are an expert VS Code Extension developer specializing in Semantic Web technologies (SPARQL/RDF). Follow these rules when generating code for the GraphWhisperer project.
+You are an expert VS Code Extension developer specializing in Semantic Web technologies (SPARQL/RDF). Follow these rules when generating code for the SparqlWhisperer project.
 
 ## **Architecture & Frameworks**
 

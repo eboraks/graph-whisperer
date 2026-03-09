@@ -1,4 +1,4 @@
-# Graph Whisperer — Visual Graph Explorer Development Plan
+# SPARQL Whisperer — Visual Graph Explorer Development Plan
 
 **Stack:** VS Code Extension (TypeScript) · React Webview (Vite) · Cytoscape.js · GraphDB (SPARQL)
 
@@ -6,7 +6,7 @@
 
 ## 1. Project Overview
 
-Add an interactive **Graph View** tab to Graph Whisperer that lives in the VS Code **bottom panel** — alongside Terminal, Problems, and the existing Results tab. When a user executes a SPARQL query (especially `CONSTRUCT`), the results are automatically visualized as a force-directed graph using Cytoscape.js. Users can click nodes to inspect properties, double-click to expand neighborhoods, and maximize the panel for a full-screen exploration experience.
+Add an interactive **Graph View** tab to SPARQL Whisperer that lives in the VS Code **bottom panel** — alongside Terminal, Problems, and the existing Results tab. When a user executes a SPARQL query (especially `CONSTRUCT`), the results are automatically visualized as a force-directed graph using Cytoscape.js. Users can click nodes to inspect properties, double-click to expand neighborhoods, and maximize the panel for a full-screen exploration experience.
 
 The flow mirrors how the existing `ResultsPanel` works for tabular results: **write query → execute → see visualization**. The Graph View is simply another rendering mode for SPARQL results.
 
@@ -342,7 +342,7 @@ In VS Code, a **bottom panel webview** requires a `WebviewViewProvider` register
       "panel": [
         {
           "id": "graphWhispererPanel",
-          "title": "Graph Whisperer",
+          "title": "SPARQL Whisperer",
           "icon": "resources/graph-icon.svg"
         }
       ]
@@ -361,7 +361,7 @@ In VS Code, a **bottom panel webview** requires a `WebviewViewProvider` register
       {
         "command": "graphWhisperer.showGraphView",
         "title": "Show Graph View",
-        "category": "Graph Whisperer",
+        "category": "SPARQL Whisperer",
         "icon": "$(type-hierarchy)"
       }
     ]
@@ -369,7 +369,7 @@ In VS Code, a **bottom panel webview** requires a `WebviewViewProvider` register
 }
 ```
 
-This places a **"Graph"** tab in a "Graph Whisperer" section of the bottom panel. The user sees it next to Terminal, Problems, Output, etc.
+This places a **"Graph"** tab in a "SPARQL Whisperer" section of the bottom panel. The user sees it next to Terminal, Problems, Output, etc.
 
 ### 6.3 `GraphViewProvider` (WebviewViewProvider)
 

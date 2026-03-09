@@ -29,7 +29,7 @@ const client = new SparqlClient(clientOptions);
 
 const server = new Server(
   {
-    name: "graph-whisperer-mcp",
+    name: "sparql-whisperer-mcp",
     version: "0.1.0",
   },
   {
@@ -244,7 +244,7 @@ async function streamToArray(stream: any): Promise<any[]> {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Graph Whisperer MCP Server running on stdio");
+  console.error("SPARQL Whisperer MCP Server running on stdio");
 }
 
 main().catch((error) => {

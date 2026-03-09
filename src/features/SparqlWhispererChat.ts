@@ -1,21 +1,41 @@
 import * as vscode from 'vscode';
 import { OntologyProvider } from '../views/OntologyProvider';
 
-export class GraphWhispererChat {
-    
+export interface QueryResultsSnapshot {
+    query: string;
+    queryType: 'select' | 'construct' | 'ask';
+    rows?: any[];           // SELECT results (first N rows)
+    triples?: any[];        // CONSTRUCT triples (first N)
+    askResult?: boolean;
+    graphSummary?: { nodeCount: number; edgeCount: number; nodeLabels: string[]; edgeLabels: string[] };
+    timestamp: number;
+}
+
+export class SparqlWhispererChat {
+    private static instance: SparqlWhispererChat;
+    private lastResults?: QueryResultsSnapshot;
+
     constructor(
         private ontologyProvider: OntologyProvider,
         private context: vscode.ExtensionContext
-    ) {}
+    ) {
+        SparqlWhispererChat.instance = this;
+    }
 
     public static register(context: vscode.ExtensionContext, ontologyProvider: OntologyProvider) {
-        const handler = new GraphWhispererChat(ontologyProvider, context);
-        const participant = vscode.chat.createChatParticipant('graphwhisperer', (request, context, response, token) => {
+        const handler = new SparqlWhispererChat(ontologyProvider, context);
+        const participant = vscode.chat.createChatParticipant('sparqlwhisperer', (request, context, response, token) => {
             return handler.handleRequest(request, context, response, token);
         });
-        
-        participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icon.svg'); // Ensure icon exists or use default
+
+        participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'icon.svg');
         context.subscriptions.push(participant);
+    }
+
+    public static setLastResults(snapshot: QueryResultsSnapshot) {
+        if (SparqlWhispererChat.instance) {
+            SparqlWhispererChat.instance.lastResults = snapshot;
+        }
     }
 
     async handleRequest(
@@ -48,19 +68,52 @@ export class GraphWhispererChat {
             if (properties.length > 50) ontologyContext += "...(more properties truncated)\n";
         }
 
-        // 2. Load Skill Instructions and Rules from Settings
-        const config = vscode.workspace.getConfiguration('graphwhisperer');
+        // 2. Prepare last query results context
+        let resultsContext = '';
+        if (this.lastResults) {
+            const r = this.lastResults;
+            resultsContext = `\n\n## Latest Query Results\n`;
+            resultsContext += `Query (${r.queryType.toUpperCase()}):\n\`\`\`sparql\n${r.query}\n\`\`\`\n`;
+
+            if (r.queryType === 'select' && r.rows) {
+                const preview = r.rows.slice(0, 30);
+                resultsContext += `Returned ${r.rows.length} rows. First ${preview.length} rows:\n`;
+                resultsContext += '```json\n' + JSON.stringify(preview, null, 2) + '\n```\n';
+            } else if (r.queryType === 'construct' && r.triples) {
+                const preview = r.triples.slice(0, 30);
+                resultsContext += `Returned ${r.triples.length} triples. First ${preview.length}:\n`;
+                resultsContext += '```json\n' + JSON.stringify(preview, null, 2) + '\n```\n';
+            } else if (r.queryType === 'ask') {
+                resultsContext += `ASK result: ${r.askResult}\n`;
+            }
+
+            if (r.graphSummary) {
+                const g = r.graphSummary;
+                resultsContext += `\nGraph visualization: ${g.nodeCount} nodes, ${g.edgeCount} edges.\n`;
+                if (g.nodeLabels.length > 0) {
+                    resultsContext += `Node labels (sample): ${g.nodeLabels.slice(0, 20).join(', ')}\n`;
+                }
+                if (g.edgeLabels.length > 0) {
+                    resultsContext += `Edge labels (sample): ${g.edgeLabels.slice(0, 20).join(', ')}\n`;
+                }
+            }
+        }
+
+        // 3. Load Skill Instructions and Rules from Settings
+        const config = vscode.workspace.getConfiguration('sparqlwhisperer');
         const skillInstructions = config.get<string>('agent.introspectionSkill') || '';
         const agentRules = config.get<string>('agent.rules') || '';
 
-        // 3. Construct System Prompt
+        // 4. Construct System Prompt
         const messages = [
             vscode.LanguageModelChatMessage.User(
-                `You are a SPARQL expert assistant named "Graph Whisperer". 
+                `You are a SPARQL expert assistant named "SPARQL Whisperer".
                 Your goal is to help the user write queries based on their specific ontology.
-                
+                You can see the latest query results and graph visualization data below to provide informed answers.
+
                 ${ontologyContext}
-                
+                ${resultsContext}
+
                 Here are your core instructions and skills for SPARQL introspection:
                 ${skillInstructions}
 

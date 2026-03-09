@@ -10,6 +10,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: path.resolve(__dirname, 'webview-ui/src/main.tsx'),
+                graphView: path.resolve(__dirname, 'webview-ui/src/graphView/main.tsx'),
             },
             output: {
                 entryFileNames: `[name].js`,

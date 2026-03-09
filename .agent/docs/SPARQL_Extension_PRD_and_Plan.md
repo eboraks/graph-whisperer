@@ -1,4 +1,4 @@
-# SPARQL VS Code Extension: "Graph Whisperer"
+# SPARQL VS Code Extension: "SPARQL Whisperer"
 
 ## Product Requirements Document (PRD) & Implementation Plan
 

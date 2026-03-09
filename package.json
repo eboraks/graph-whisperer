@@ -1,15 +1,15 @@
 {
-  "name": "graph-whisperer",
-  "displayName": "Graph Whisperer",
+  "name": "sparql-whisperer",
+  "displayName": "SPARQL Whisperer",
   "description": "Professional-grade VS Code extension for RDF/SPARQL development, optimized for GraphDB.",
   "license": "AGPL-3.0-or-later",
   "publisher": "eboraks",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eboraks/graph-whisperer.git"
+    "url": "https://github.com/eboraks/sparql-whisperer.git"
   },
   "icon": "resources/icon.png",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -22,36 +22,42 @@
   "contributes": {
     "commands": [
       {
-        "command": "graphwhisperer.runQuery",
+        "command": "sparqlwhisperer.runQuery",
         "title": "Run SPARQL Query",
         "icon": "$(play)"
       },
       {
-        "command": "graphwhisperer.setPassword",
+        "command": "sparqlwhisperer.setPassword",
         "title": "Set GraphDB Password"
       },
       {
-        "command": "graphwhisperer.refreshOntology",
+        "command": "sparqlwhisperer.refreshOntology",
         "title": "Refresh Ontology",
         "icon": "$(refresh)"
       },
       {
-        "command": "graphwhisperer.searchOntology",
+        "command": "sparqlwhisperer.searchOntology",
         "title": "Search Ontology",
         "icon": "$(search)"
+      },
+      {
+        "command": "sparqlwhisperer.showGraphView",
+        "title": "Show Graph View",
+        "category": "SPARQL Whisperer",
+        "icon": "$(type-hierarchy)"
       }
     ],
     "chatParticipants": [
       {
-        "id": "graphwhisperer",
-        "name": "graphwhisperer",
+        "id": "sparqlwhisperer",
+        "name": "sparql",
         "description": "Ask questions about your GraphDB ontology and schema.",
         "isSticky": true
       }
     ],
     "keybindings": [
       {
-        "command": "graphwhisperer.runQuery",
+        "command": "sparqlwhisperer.runQuery",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorLangId == sparql"
@@ -60,31 +66,37 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "graphwhisperer-sidebar",
-          "title": "Graph Whisperer",
+          "id": "sparqlwhisperer-sidebar",
+          "title": "SPARQL Whisperer",
           "icon": "resources/activity-bar-icon.svg"
         }
       ],
       "panel": [
         {
-          "id": "graphwhisperer",
+          "id": "sparqlwhisperer",
           "title": "SPARQL Results",
           "icon": "resources/activity-bar-icon.svg"
         }
       ]
     },
     "views": {
-      "graphwhisperer-sidebar": [
+      "sparqlwhisperer-sidebar": [
         {
-          "id": "graphwhisperer.ontology",
+          "id": "sparqlwhisperer.ontology",
           "name": "Ontology Explorer",
           "icon": "resources/activity-bar-icon.svg"
         }
       ],
-      "graphwhisperer": [
+      "sparqlwhisperer": [
         {
-          "id": "graphwhisperer.results",
+          "id": "sparqlwhisperer.results",
           "name": "Query Results",
+          "type": "webview",
+          "icon": "resources/activity-bar-icon.svg"
+        },
+        {
+          "id": "sparqlwhisperer.graphView",
+          "name": "Graph",
           "type": "webview",
           "icon": "resources/activity-bar-icon.svg"
         }
@@ -93,13 +105,13 @@
     "menus": {
       "view/title": [
         {
-          "command": "graphwhisperer.refreshOntology",
-          "when": "view == graphwhisperer.ontology",
+          "command": "sparqlwhisperer.refreshOntology",
+          "when": "view == sparqlwhisperer.ontology",
           "group": "navigation"
         },
         {
-          "command": "graphwhisperer.searchOntology",
-          "when": "view == graphwhisperer.ontology",
+          "command": "sparqlwhisperer.searchOntology",
+          "when": "view == sparqlwhisperer.ontology",
           "group": "navigation"
         }
       ]
@@ -126,34 +138,44 @@
       }
     ],
     "configuration": {
-      "title": "Graph Whisperer",
+      "title": "SPARQL Whisperer",
       "properties": {
-        "graphwhisperer.endpoint": {
+        "sparqlwhisperer.endpoint": {
           "type": "string",
           "default": "http://localhost:7200/repositories/my-repo",
           "description": "URL to the GraphDB endpoint."
         },
-        "graphwhisperer.username": {
+        "sparqlwhisperer.username": {
           "type": "string",
           "default": "",
           "description": "Username for Basic Authentication."
         },
-        "graphwhisperer.password": {
+        "sparqlwhisperer.password": {
           "type": "string",
           "default": "",
           "description": "Password for Basic Authentication. WARNING: Use the 'Set Password' command for better security. This field is stored in plain text."
         },
-        "graphwhisperer.agent.introspectionSkill": {
+        "sparqlwhisperer.mcp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-start the built-in MCP server so AI agents (Cursor, Claude Code, etc.) can query your GraphDB endpoint directly."
+        },
+        "sparqlwhisperer.mcp.port": {
+          "type": "number",
+          "default": 3330,
+          "description": "Port for the built-in MCP server (SSE transport). Connect at http://localhost:<port>/sse"
+        },
+        "sparqlwhisperer.agent.introspectionSkill": {
           "type": "string",
           "editPresentation": "multilineText",
           "description": "Instructions for the agent on how to introspect the SPARQL endpoint.",
           "default": "## name: sparql-introspection description: Probes a SPARQL endpoint to discover classes, properties, and graph structure.\n\n# SPARQL Introspection Skill\n\nThis skill allows the agent to query the connected triplestore to understand its schema dynamically.\n\n## Goal\n\nTo provide the AI agent with grounded knowledge of the graph's classes and predicates so it can suggest accurate SPARQL patterns instead of hallucinating schema names.\n\n## Instructions\n\n1. **Identify the Endpoint:** Extract the current SPARQL endpoint URL and credentials.\n2. **Execute Probes:** Run the following queries to gather context:\n\n### Query to List Classes\n\nSELECT DISTINCT ?class WHERE { ?s a ?class. } LIMIT 50\n\n### Query to Find Classes/Properties by Keyword\n\nIf the user mentions a specific term (e.g., \"Human\", \"species\") but you are unsure of the IRI, search for it:\n\n```sparql\nSELECT DISTINCT ?match ?type WHERE {\n  { ?match a rdfs:Class . BIND(\"Class\" AS ?type) }\n  UNION\n  { ?match a rdf:Property . BIND(\"Property\" AS ?type) }\n  FILTER(CONTAINS(LCASE(STR(?match)), \"keyword\"))\n} LIMIT 10\n```\n\n### Query to List Properties for a Class\n\nIf the user mentions a specific class (e.g., `schema:Person`), probe its predicates:\n\n```sparql\nSELECT DISTINCT ?p WHERE {\n ?s a <CLASS_URI> ; ?p ?o.\n} LIMIT 50\n```\n\n### Query for Property Usage (Statistical)\n\n```sparql\nSELECT ?p (COUNT(*) AS ?usage) WHERE {\n ?s ?p ?o.\n} GROUP BY ?p ORDER BY DESC(?usage) LIMIT 20\n```\n\n## Verification\n\nBefore finalizing any query for the user, **you must verify your assumptions** about the schema.\n\n- **Check existence:** `ASK { ?s a vocab:Character }`\n- **Check property domain:** `ASK { ?s a vocab:Character ; vocab:species ?o }`\n\n## Constraints\n\n- **Read-Only:** Only execute `SELECT` or `ASK` queries for introspection.\n- **Performance:** Always apply a `LIMIT` to introspection queries.\n- **Feedback:** If a probe fails, report the specific error to the user immediately.\n- **No Hallucinations:** Do not guess IRI names. Use the \"Keyword Search\" or \"Property Usage\" queries to find the actual names."
         },
-        "graphwhisperer.agent.rules": {
+        "sparqlwhisperer.agent.rules": {
           "type": "string",
           "editPresentation": "multilineText",
-          "description": "General rules and guidelines for the Graph Whisperer agent.",
-          "default": "## name: graph-whisperer-dev description: Guidelines for building the GraphWhisperer VS Code extension using Node.js and SPARQL.\n\n# GraphWhisperer Development Rules\n\nYou are an expert VS Code Extension developer specializing in Semantic Web technologies (SPARQL/RDF). Follow these rules when generating code for the GraphWhisperer project.\n\n## Architecture & Frameworks\n\n* **Language:** Use TypeScript exclusively for the extension logic.\n* **Foundation:** Follow the standard VS Code Extension lifecycle. Register commands and providers in the `activate` function of `extension.ts`.\n* **Query Execution:** Use the `sparql-http-client` library (ESM version) for all endpoint interactions.\n* **Result Visualization:**\n  * For `SELECT` queries, use the `<vscode-data-grid>` component from the `@vscode/webview-ui-toolkit`.\n  * For `CONSTRUCT` queries, use a collapsible tree view like `@uiw/react-json-view`.\n\n## SPARQL Query Standards\n\n* **SPARQL 1.1:** Adhere strictly to W3C SPARQL 1.1 Query and Update specifications.\n* **Best Practices:**\n  * Always include `PREFIX` declarations to improve readability.\n  * Use `LIMIT` by default for exploratory queries to prevent endpoint timeouts.\n  * Prefer `VALUES` or specific triple patterns over complex `FILTER` regex for performance.\n\n## Webview & Security\n\n* **Content Security Policy (CSP):** Every webview must implement a strict CSP that restricts script and style sources.\n* **Theming:** Use CSS variables (e.g., `var(--vscode-editor-foreground)`) to ensure the UI matches the user's active IDE theme.\n* **Credentials:** Use the `vscode.secrets` API to store SPARQL endpoint credentials safely; never store them in workspace settings.\n\n## Agentic Integration\n\n* **Chat Participant:** Register the `@graphwhisperer` chat participant to handle natural language query requests within the IDE.\n* **Model Context Protocol (MCP):** When building introspection tools, prioritize the MCP standard to ensure compatibility with both Antigravity and Cursor."
+          "description": "General rules and guidelines for the SPARQL Whisperer agent.",
+          "default": "## name: sparql-whisperer-dev description: Guidelines for building the SparqlWhisperer VS Code extension using Node.js and SPARQL.\n\n# SparqlWhisperer Development Rules\n\nYou are an expert VS Code Extension developer specializing in Semantic Web technologies (SPARQL/RDF). Follow these rules when generating code for the SparqlWhisperer project.\n\n## Architecture & Frameworks\n\n* **Language:** Use TypeScript exclusively for the extension logic.\n* **Foundation:** Follow the standard VS Code Extension lifecycle. Register commands and providers in the `activate` function of `extension.ts`.\n* **Query Execution:** Use the `sparql-http-client` library (ESM version) for all endpoint interactions.\n* **Result Visualization:**\n  * For `SELECT` queries, use the `<vscode-data-grid>` component from the `@vscode/webview-ui-toolkit`.\n  * For `CONSTRUCT` queries, use a collapsible tree view like `@uiw/react-json-view`.\n\n## SPARQL Query Standards\n\n* **SPARQL 1.1:** Adhere strictly to W3C SPARQL 1.1 Query and Update specifications.\n* **Best Practices:**\n  * Always include `PREFIX` declarations to improve readability.\n  * Use `LIMIT` by default for exploratory queries to prevent endpoint timeouts.\n  * Prefer `VALUES` or specific triple patterns over complex `FILTER` regex for performance.\n\n## Webview & Security\n\n* **Content Security Policy (CSP):** Every webview must implement a strict CSP that restricts script and style sources.\n* **Theming:** Use CSS variables (e.g., `var(--vscode-editor-foreground)`) to ensure the UI matches the user's active IDE theme.\n* **Credentials:** Use the `vscode.secrets` API to store SPARQL endpoint credentials safely; never store them in workspace settings.\n\n## Agentic Integration\n\n* **Chat Participant:** Register the `@sparqlwhisperer` chat participant to handle natural language query requests within the IDE.\n* **Model Context Protocol (MCP):** When building introspection tools, prioritize the MCP standard to ensure compatibility with both Antigravity and Cursor."
         }
       }
     }
@@ -171,6 +193,7 @@
   },
   "devDependencies": {
     "@tanstack/react-table": "^8.21.3",
+    "@types/cytoscape": "^3.21.9",
     "@types/node": "^20.0.0",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
@@ -189,6 +212,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@uiw/react-json-view": "^2.0.0-alpha.41",
+    "cytoscape": "^3.33.1",
+    "cytoscape-cose-bilkent": "^4.1.0",
     "sparql-http-client": "^3.0.0",
     "sparqljs": "^3.7.1",
     "typescript-eslint": "^8.14.0",
